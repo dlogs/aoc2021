@@ -1,5 +1,5 @@
 import day.*
 
 fun main(args: Array<String>) {
-    Day2(2).run()
+    Day3(2).run()
 }
