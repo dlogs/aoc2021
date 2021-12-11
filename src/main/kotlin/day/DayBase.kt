@@ -27,7 +27,7 @@ abstract class DayBase(val day: Int, val part: Int) {
 
     fun asIntArray() = asArray().map { it.toInt() }
 
-    protected
+    fun as2dIntArray() = asArray().map { line -> line.map { c -> c.toString().toInt() } }
 
-    fun binaryToInt(binary: List<Int>) = Integer.parseInt(binary.joinToString("") { it.toString() }, 2)
+    protected fun binaryToInt(binary: List<Int>) = Integer.parseInt(binary.joinToString("") { it.toString() }, 2)
 }
