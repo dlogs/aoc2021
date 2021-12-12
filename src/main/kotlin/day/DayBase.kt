@@ -14,15 +14,19 @@ abstract class DayBase(val day: Int, val part: Int) {
   fun as2dArray() = asArray().map { line -> line.map { c -> c.toString() } }
 
   fun asArrayByBlanks(): List<List<String>> {
-    val lines = asArray()
-    return asArray().flatMapIndexed { index, x ->
-      when {
-        index == 0 || index == lines.lastIndex -> listOf(index)
-        x.isEmpty() -> listOf(index - 1, index + 1)
-        else -> emptyList()
+    val lines = dailyFileLines
+    val blocks = mutableListOf<MutableList<String>>()
+    var currentBlock = mutableListOf<String>()
+
+    for (line in lines) {
+      if (line.isBlank()) {
+        blocks.add(currentBlock)
+        currentBlock = mutableListOf()
+      } else {
+        currentBlock.add(line)
       }
     }
-      .windowed(size = 2, step = 2) { (from, to) -> lines.slice(from..to) }
+    return blocks
   }
 
   fun asIntArray() = asArray().map { it.toInt() }
