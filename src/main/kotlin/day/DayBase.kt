@@ -26,6 +26,7 @@ abstract class DayBase(val day: Int, val part: Int) {
         currentBlock.add(line)
       }
     }
+    blocks.add(currentBlock)
     return blocks
   }
 

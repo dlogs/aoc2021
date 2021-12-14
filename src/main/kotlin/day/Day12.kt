@@ -16,7 +16,7 @@ class Day12(part: Int) : DayBase(12, part) {
       touching[to]?.add(from)
       touching[from]?.add(to)
     }
-    println(touching["start"]!!.sumOf {followPath(it, setOf(), part == 1) })
+    println(touching["start"]!!.sumOf { followPath(it, setOf(), part == 1) })
   }
 
   fun followPath(path: String, visited: Set<String>, usedDouble: Boolean): Int {
