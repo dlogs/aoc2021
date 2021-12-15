@@ -5,16 +5,13 @@ import java.util.*
 data class Node(val x: Int, val y: Int, val cost: Int)
 
 class Day15(part: Int) : DayBase(15, part) {
-  var grid = as2dIntArray()
+  var grid = if (part == 1) as2dIntArray() else addPart2(as2dIntArray())
   val toSearch = PriorityQueue<Node>(compareBy { n -> n.cost })
-  var visited = List(grid[0].size, { MutableList<Int?>(grid.size, { null }) })
+  val maxX = grid[0].size - 1
+  val maxY = grid.size - 1
+  var visited = Array(grid[0].size, { IntArray(grid.size, { Int.MAX_VALUE }) })
 
   override fun run() {
-    if (part == 2) {
-      addPart2()
-      //println(grid.joinToString("\n") { it.joinToString("") } )
-      visited = List(grid[0].size, { MutableList<Int?>(grid.size, { null }) })
-    }
 
     toSearch.add(Node(0, 0, 0))
     var done = false
@@ -32,37 +29,34 @@ class Day15(part: Int) : DayBase(15, part) {
     }
   }
 
-  fun addPart2() {
-    grid = grid.map { y -> (0..4).toList().flatMap { i -> y.map { x -> i + x }.map { if (it > 9) it - 9 else it  } } }
-    grid = (0..4).toList().flatMap { i -> grid.map { y -> y.map { x -> x + i }.map { if (it > 9) it - 9 else it  } } }
+  fun addPart2(input: List<List<Int>>): List<List<Int>> {
+    var output = input.map { y -> (0..4).toList().flatMap { i -> y.map { x -> i + x }.map { if (it > 9) it - 9 else it  } } }
+    output = (0..4).toList().flatMap { i -> output.map { y -> y.map { x -> x + i }.map { if (it > 9) it - 9 else it  } } }
+    return output
   }
 
   fun search(n: Node): Boolean {
-    if (n.y == grid.size - 1 && n.x == grid[0].size - 1) {
+    if (n.y == maxY && n.x == maxX) {
       return true
-    }
-    if (hasBetter(n)) {
-      return false
     }
     addNeighbors(n)
     return false
   }
 
-  fun hasBetter(n: Node): Boolean {
-    val visitedWithCost = visited[n.x][n.y]
-    val lowerCost = (visitedWithCost == null || n.cost <= visitedWithCost)
-    if (lowerCost) {
+  fun isBetter(n: Node): Boolean {
+    if (n.cost < visited[n.x][n.y]) {
       visited[n.x][n.y] = n.cost
+      return true
     }
-    return !lowerCost
+    return false
   }
 
   fun addNeighbors(n: Node) {
     val neighbors = listOf(0 to -1, 0 to 1, 1 to 0, -1 to 0)
       .map { (x, y) -> n.x + x to n.y + y }
-      .filter { (x, y) -> y >= 0 && y < grid.size && x >= 0 && x < grid[0].size }
+      .filter { (x, y) -> y in 0..maxY && x in 0..maxX }
       .map { (x, y) -> Node(x, y, grid[y][x] + n.cost) }
-      .filterNot(::hasBetter)
+      .filter(::isBetter)
     toSearch.addAll(neighbors)
   }
 }
